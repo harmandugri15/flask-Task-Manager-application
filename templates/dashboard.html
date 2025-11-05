@@ -1,0 +1,1042 @@
+{% extends 'base.html' %}
+{% block style %}
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@300;400;500;700&display=swap');
+
+    :root {
+        --sidebar-width: 280px;
+        --navbar-height: 10vh;
+        --secondary-color: #0f0c29;
+        --background-color: #071a37;
+        --card-background: #161b22;
+        --accent-color: #03033a;
+        --font-primary: 'Roboto', sans-serif;
+        --font-secondary: 'Orbitron', sans-serif;
+        --border-radius: 15px;
+        --box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    }
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: var(--font-primary);
+        background: var(--background-color);
+        color: white;
+        min-height: 100vh;
+        display: flex;
+    }
+
+    /* Sidebar Styles */
+    .sidebar {
+        width: var(--sidebar-width);
+        background: #1a1a1a;
+        backdrop-filter: blur(10px);
+        position: fixed;
+        height: calc(100vh - var(--navbar-height));
+        top: var(--navbar-height);
+        left: 0;
+        padding: 20px;
+        border-right: 1px solid rgba(255, 255, 255, 0.1);
+        box-shadow: 5px 0 15px rgba(0, 0, 0, 0.1);
+        z-index: 1000;
+        transition: transform 0.3s ease;
+    }
+
+    .sidebar-header {
+        text-align: center;
+        padding: 20px 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        margin-bottom: 20px;
+        color: white;
+    }
+
+    .sidebar-header h2 {
+        color: white;
+        text-shadow: 0 0 10px var(--primary-color);
+        font-size: 1.5rem;
+        font-family: var(--font-secondary);
+    }
+
+    .menu-item {
+        padding: 15px;
+        margin: 10px 0;
+        border-radius: var(--border-radius);
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .menu-item:hover {
+        background: rgba(255, 255, 255, 0.1);
+        transform: translateX(10px);
+        box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+    }
+
+    .menu-item.active {
+        background: rgba(255, 255, 255, 0.2);
+        border: 1px solid var(--primary-color);
+        box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+    }
+
+    .menu-item i {
+        color: var(--primary-color);
+        font-size: 1.2rem;
+    }
+
+    /* Main Content */
+    .main-content {
+        margin-left: var(--sidebar-width);
+        padding: 30px;
+        min-height: calc(100vh - var(--navbar-height));
+        width: calc(100% - var(--sidebar-width));
+        transition: margin-left 0.3s ease, width 0.3s ease;
+        margin-top: var(--navbar-height);
+    }
+
+    /* Dashboard Sections */
+    .dashboard-section {
+        display: none;
+        animation: fadeIn 0.5s ease;
+    }
+
+    .dashboard-section.active {
+        display: block;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+
+    /* Task List Section */
+    .container {
+        margin-top: 20px;
+        background: rgba(15, 15, 84, 0.508);
+        backdrop-filter: blur(10px);
+        border-radius: var(--border-radius);
+        padding: 30px;
+        width: 70%;
+        margin: auto;
+        box-shadow: var(--box-shadow);
+        color: white;
+    }
+
+    #add-task-btn {
+        background-color: var(--accent-color);
+        color: khaki;
+        padding: 10px 20px;
+        border-radius: var(--border-radius);
+        transition: background-color 0.3s ease;
+    }
+
+    #add-task-btn:hover {
+        background-color: rgba(3, 3, 58, 0.8);
+    }
+
+    h1 {
+        text-align: center;
+        margin-bottom: 30px;
+        font-size: 2.5rem;
+        text-shadow: 0 0 10px var(--primary-color), 0 0 20px var(--primary-color), 0 0 30px var(--primary-color);
+        font-family: var(--font-secondary);
+    }
+
+    .input-container {
+        display: flex;
+        margin-bottom: 20px;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    #task-input,
+    #deadline-input {
+        flex-grow: 1;
+        padding: 15px;
+        font-size: 1rem;
+        border: none;
+        background: rgba(255, 255, 255, 0.2);
+        color: #fff;
+        border-radius: var(--border-radius);
+        transition: background-color 0.3s ease;
+    }
+
+    #task-input:focus,
+    #deadline-input:focus {
+        background-color: rgba(255, 255, 255, 0.3);
+    }
+
+    .task-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 20px;
+        margin-top: 20px;
+    }
+
+    .task-card {
+        background: var(--card-background);
+        padding: 20px;
+        border-radius: var(--border-radius);
+        transition: background-color 0.3s ease, transform 0.3s ease;
+        position: relative;
+        box-shadow: var(--box-shadow);
+    }
+
+    .task-card:hover {
+        background-color: rgba(255, 255, 255, 0.2);
+        transform: translateY(-5px);
+    }
+
+    .task-card.completed {
+        text-decoration: line-through;
+        opacity: 0.7;
+    }
+
+    .task-card.priority {
+        background-color: #ff9800;
+        color: #0f0c29;
+        font-weight: bold;
+    }
+
+    .task-card h3 {
+        margin-bottom: 10px;
+    }
+
+    .task-card p {
+        margin-bottom: 20px;
+    }
+
+    .task-card .actions {
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+    }
+
+    .task-card .actions button {
+        background: none;
+        border: none;
+        color: #ff4d4d;
+        cursor: pointer;
+        font-size: 1.2rem;
+        transition: color 0.3s ease;
+    }
+
+    .task-card .actions .complete-btn {
+        color: #00ccff;
+    }
+
+    .task-card .actions .complete-btn:hover {
+        color: #00ffff;
+    }
+
+    .task-card .actions .priority-btn {
+        color: #ffc107;
+    }
+
+    .task-card .actions .priority-btn:hover {
+        color: #ff9800;
+    }
+
+    .task-card .actions .delete-btn:hover {
+        color: #ff0000;
+    }
+
+    /* Calendar Section */
+    .calendar {
+        background: var(--card-background);
+        backdrop-filter: blur(10px);
+        border-radius: var(--border-radius);
+        padding: 20px;
+        margin-top: 20px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        box-shadow: var(--box-shadow);
+    }
+
+    .calendar-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        color: var(--primary-color);
+    }
+
+    .calendar-grid {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 10px;
+        text-align: center;
+    }
+
+    .calendar-day {
+        padding: 10px;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: var(--border-radius);
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .calendar-day:hover {
+        background: rgba(255, 255, 255, 0.1);
+        transform: translateY(-2px);
+    }
+
+    .calendar-day.active {
+        background: rgba(255, 255, 255, 0.2);
+        border: 1px solid var(--primary-color);
+        box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+    }
+
+    /* Profile Section */
+    .profile-card {
+        background: var(--card-background);
+        backdrop-filter: blur(10px);
+        border-radius: var(--border-radius);
+        padding: 30px;
+        text-align: center;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        box-shadow: var(--box-shadow);
+    }
+
+    .profile-image {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        margin: 0 auto 20px;
+        border: 3px solid var(--primary-color);
+        box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .profile-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 50%;
+    }
+
+    .profile-image input[type="file"] {
+        display: none;
+    }
+
+    .profile-image label {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        background: var(--primary-color);
+        color: white;
+        border-radius: 50%;
+        padding: 5px;
+        cursor: pointer;
+        font-size: 1.2rem;
+    }
+
+    .profile-stats {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+        margin-top: 30px;
+    }
+
+    .stat-item {
+        background: rgba(255, 255, 255, 0.05);
+        padding: 15px;
+        border-radius: var(--border-radius);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        transition: all 0.3s ease;
+    }
+
+    .stat-item:hover {
+        transform: translateY(-5px);
+        background: rgba(255, 255, 255, 0.1);
+    }
+
+    footer {
+        display: none !important;
+    }
+
+    /* Mobile Responsive Design */
+    @media (max-width: 768px) {
+        .profile-stats {
+            grid-template-columns: repeat(1, 1fr);
+            gap: 10px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .sidebar {
+            transform: translateX(-100%);
+            width: 250px;
+            position: fixed;
+            height: calc(100vh - var(--navbar-height));
+            top: var(--navbar-height);
+            left: 0;
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .sidebar.active {
+            transform: translateX(0);
+        }
+
+        .mobile-menu-toggle {
+            display: block;
+            position: fixed;
+            top: calc(var(--navbar-height) + 20px);
+            left: 20px;
+            z-index: 1001;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .main-content {
+            margin-left: 0;
+            width: 100%;
+            margin-top: var(--navbar-height);
+        }
+
+        .task-grid {
+            grid-template-columns: repeat(auto-fill, minmax(100%, 1fr));
+        }
+
+        .timeline-item {
+            width: 100%;
+        }
+    }
+
+    .star {
+        position: fixed;
+        width: 2px;
+        height: 2px;
+        background: #fff;
+        border-radius: 50%;
+        animation: twinkle 1s infinite;
+    }
+
+    @keyframes twinkle {
+        0% { opacity: 0; }
+        50% { opacity: 1; }
+        100% { opacity: 0; }
+    }
+
+    /* Timeline Styles */
+    .timeline-item {
+        background: var(--card-background);
+        padding: 20px;
+        border-radius: var(--border-radius);
+        transition: background-color 0.3s ease, transform 0.3s ease;
+        position: relative;
+        box-shadow: var(--box-shadow);
+        margin-bottom: 20px;
+    }
+
+    .timeline-item:hover {
+        background-color: rgba(255, 255, 255, 0.2);
+        transform: translateY(-5px);
+    }
+
+    .timeline-item h3 {
+        margin-bottom: 10px;
+    }
+
+    .timeline-item p {
+        margin-bottom: 20px;
+    }
+
+    .timeline-item .actions {
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+    }
+
+    .timeline-item .actions button {
+        background: none;
+        border: none;
+        color: #ff4d4d;
+        cursor: pointer;
+        font-size: 1.2rem;
+        transition: color 0.3s ease;
+    }
+
+    .timeline-item .actions .complete-btn {
+        color: #00ccff;
+    }
+
+    .timeline-item .actions .complete-btn:hover {
+        color: #00ffff;
+    }
+
+    .timeline-item .actions .priority-btn {
+        color: #ffc107;
+    }
+
+    .timeline-item .actions .priority-btn:hover {
+        color: #ff9800;
+    }
+
+    .timeline-item .actions .delete-btn:hover {
+        color: #ff0000;
+    }
+
+    /* Highlight Calendar Dates */
+    .calendar-day.task-due {
+        background: var(--accent-color);
+        color: white;
+        font-weight: bold;
+    }
+
+    /* Style for dynamically generated task card */
+    .dashboard-task {
+        border: 2px solid white;
+        background: var(--card-background);
+        padding: 20px;
+        margin: 20px 0;
+        border-radius: var(--border-radius);
+        box-shadow: var(--box-shadow);
+        transition: transform 0.3s ease, background-color 0.3s ease;
+    }
+
+    .dashboard-task:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+        transform: translateY(-5px);
+    }
+
+    .dashboard-task table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .dashboard-task td {
+        padding: 10px;
+        vertical-align: top;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .dashboard-task {
+        overflow: hidden; /* Ensure no overflow occurs */
+        margin-bottom: 10px; /* Space between tasks */
+        margin: auto;
+    }
+
+    .dashboard-task td {
+        vertical-align: top; /* Align content to the top */
+    }
+
+    .highlight {
+        background-color: #ff9800;
+        color: #0f0c29;
+        font-weight: bold;
+        box-shadow: 0 0 20px rgba(255, 152, 0, 0.5);
+    }
+
+    .completed {
+        text-decoration: line-through;
+        opacity: 0.7;
+    }
+    .hidden{
+        display: none;
+    }
+
+    /* PDF Section */
+    .pdf-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 20px;
+        margin-top: 20px;
+    }
+
+    .pdf-item {
+        background: var(--card-background);
+        padding: 20px;
+        border-radius: var(--border-radius);
+        transition: background-color 0.3s ease, transform 0.3s ease;
+        position: relative;
+        box-shadow: var(--box-shadow);
+        text-align: center;
+    }
+
+    .pdf-item:hover {
+        background-color: rgba(255, 255, 255, 0.2);
+        transform: translateY(-5px);
+    }
+
+    .pdf-item p {
+        margin-bottom: 10px;
+    }
+
+    .pdf-item a {
+        color: #00ccff;
+        text-decoration: none;
+        margin-right: 10px;
+    }
+
+    .pdf-item button {
+        background: none;
+        border: none;
+        color: #ff4d4d;
+        cursor: pointer;
+        font-size: 1.2rem;
+        transition: color 0.3s ease;
+    }
+
+    .pdf-item button:hover {
+        color: #ff0000;
+    }
+
+    /* Modal Styles */
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0, 0, 0, 0.8);
+    }
+
+    .modal-content {
+        background-color: #fefefe;
+        margin: 15% auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 80%;
+        max-width: 600px;
+        border-radius: var(--border-radius);
+        box-shadow: var(--box-shadow);
+    }
+
+    .close {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+    }
+
+    .close:hover,
+    .close:focus {
+        color: black;
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+    .pdf-viewer {
+        width: 100%;
+        height: 500px;
+        border: 1px solid #ddd;
+        border-radius: var(--border-radius);
+        overflow: auto;
+    }
+</style>
+{% endblock %}
+{% block container %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cosmic Mission Control</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Mobile Menu Toggle -->
+    <div class="mobile-menu-toggle" onclick="toggleSidebar()">
+        <i class="fas fa-bars" style="color: var(--primary-color);"></i>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h2>Dashboard</h2>
+        </div>
+        <div class="menu-item active show" data-section="add-task">
+            <i class="fas fa-plus"></i>
+            <span>New Task</span>
+        </div>
+        <div class="menu-item show" data-section="calendar">
+            <i class="fas fa-calendar-stars"></i>
+            <span>Active task dates</span>
+        </div>
+        <div class="menu-item hide" data-section="deadlines">
+            <i class="fas fa-clock"></i>
+            <span>Timeline</span>
+        </div>
+        <div class="menu-item hide" data-section="profile">
+            <i class="fas fa-user-astronaut"></i>
+            <span>Commander Profile</span>
+        </div>
+        <div class="menu-item hide" data-section="pdfs">
+            <i class="fas fa-file-pdf"></i>
+            <span>PDFs</span>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+
+        <!-- Add Task Section -->
+        <div class="dashboard-section active" id="add-task">
+            <form method="POST">
+                <div class="container">
+                    <h1 style="color: #00ccff;">To-Do List</h1>
+                    <div class="input-container">
+                        <textarea name="task-input" id="task-input" required></textarea>
+                        <input type="date" name="deadline-input" id="deadline-input" placeholder="Enter deadline" required>
+                        <button formaction="/add" type="submit" id="add-task-btn">Add</button>
+                    </div>
+                    <div class="task-grid" id="task-grid"></div>
+                </div>
+            </form>
+        </div>
+
+        <!-- Calendar Section -->
+        <div class="dashboard-section" id="calendar">
+            <div class="calendar">
+                <div class="calendar-header">
+                    <button class="btn" onclick="previousMonth()">&lt;</button>
+                    <h3 id="calendar-month">Star Date: {{ current_date | date('%Y.%m') }}</h3>
+                    <button class="btn" onclick="nextMonth()">&gt;</button>
+                </div>
+                <div class="calendar-grid" id="calendar-grid">
+                    <!-- Calendar will be populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Timeline Section -->
+        <div class="dashboard-section" id="deadlines">
+            <div class="dashboard-card">
+                <h3>Timeline</h3>
+                <div class="timeline-grid" id="deadline-list">
+                    <!-- Deadlines will be populated by JavaScript -->
+                    {% for task in tasks %}
+                        <div class="timeline-item {% if task.priority %}priority{% endif %} {% if task.completed %}completed{% endif %}" data-id="{{ task.id }}">
+                            <p>{{ task.task }}</p>
+                            <div class="actions">
+                                <button class="complete-btn" onclick="toggleComplete({{ task.id }})"><i class="fas fa-check"></i></button>
+                                <button class="priority-btn" onclick="togglePriority({{ task.id }})"><i class="fas fa-exclamation"></i></button>
+                                <button class="delete-btn" onclick="deleteTask({{ task.id }})"><i class="fas fa-trash"></i></button>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Profile Section -->
+        <div class="dashboard-section" id="profile">
+            <div class="profile-card">
+                <div class="profile-image">
+                    <img src="{{ url_for('profile_image', filename=user.profile_image) }}" alt="Commander" id="profileImage">
+                    <input type="file" id="profileImageInput" accept="image/*">
+                    <label for="profileImageInput"><i class="fas fa-plus"></i></label>
+                </div>
+                <h3>{{ user.username }}</h3>
+                <p>Does stuff on time</p>
+                <div class="profile-stats">
+                    <div class="stat-item">
+                        <h4>{{ tasks | length }}</h4>
+                        <span>Active Tasks</span>
+                    </div>
+                    <div class="stat-item">
+                        <h4>{{ tasks | selectattr("priority", "eq", True) | list | length }}</h4>
+                        <span>Prioritized Tasks</span>
+                    </div>
+                    <div class="stat-item">
+                        <h4>{{ tasks | selectattr("completed", "eq", True) | list | length }}</h4>
+                        <span>Completed Tasks</span>
+                    </div>
+                    <div class="stat-item">
+                        <a href="{{ url_for('logout') }}">Logout</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PDF Section -->
+        <div class="dashboard-section" id="pdfs">
+            <div class="container">
+                <h1 style="color: white; ">Uploaded PDFs</h1>
+                <form style="margin: auto;" method="POST" enctype="multipart/form-data" action="{{ url_for('upload_pdf') }}">
+                    <input style="margin-left: 26%;" type="file" name="pdf" accept=".pdf" required>
+                    <button type="submit" style="padding: 10px 20px ;">Upload PDF</button>
+                </form>
+                <div class="pdf-grid">
+                    {% for pdf in current_user.pdfs %}
+                        <div class="pdf-item" data-id="{{ pdf.id }}">
+                            <p>{{ pdf.filename }}</p>
+                            <a href="#" onclick="viewPDF('{{ url_for('view_pdf', id=pdf.id) }}')">View</a>
+                            <button onclick="deletePDF({{ pdf.id }})">Delete</button>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Render Dashboard Tasks inside Main Content -->
+        <div id="tasks-container" style="width: 1000px; margin: auto;margin-top: 8vh;">
+            {% for item in tasks %}
+            <div class="dashboard-task {% if item.priority %}priority{% endif %} {% if item.completed %}completed{% endif %}">
+                <table width="100%">
+                    <tr>
+                        <td>{{ loop.index }}</td>
+                        <td style="width: 500px; overflow-wrap: break-word; word-wrap: break-word; word-break: normal;">
+                            {{ item.task }}
+                        </td>
+                        <td>{{ item.date }}</td>
+                        <!-- <td><a href="{{ url_for('deleteFunction', id=item.id) }}">Delete</a></td> -->
+                    </tr>
+                </table>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Modal for PDF Viewer -->
+    <div id="pdfModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <div class="pdf-viewer" id="pdfViewer">
+                <iframe id="pdfFrame" width="100%" height="100%" frameborder="0"></iframe>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let hide=document.querySelector(".hide");
+        hide.addEventListener("click",function(){
+            let table=document.querySelector("#tasks-container");
+            table.classList.add('hidden');
+        });
+        let show=document.querySelector(".show");
+        show.addEventListener("click",function(){
+            let table=document.querySelector("#tasks-container");
+            table.classList.remove('hidden');
+        });
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('active');
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const menuItems = document.querySelectorAll('.menu-item');
+            const sections = document.querySelectorAll('.dashboard-section');
+
+            menuItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    // Remove active class from all menu items and sections
+                    menuItems.forEach(i => i.classList.remove('active'));
+                    sections.forEach(s => s.classList.remove('active'));
+
+                    // Add active class to the clicked menu item and corresponding section
+                    item.classList.add('active');
+                    const sectionId = item.getAttribute('data-section');
+                    document.getElementById(sectionId).classList.add('active');
+                });
+            });
+
+            // Initialize the calendar
+            renderCalendar();
+
+            // Highlight prioritized tasks on page load
+            const prioritizedTasks = document.querySelectorAll('.timeline-item.priority');
+            prioritizedTasks.forEach(task => {
+                task.classList.add('highlight');
+            });
+        });
+
+        let currentDate = new Date();
+
+        function renderCalendar() {
+            const calendarGrid = document.getElementById('calendar-grid');
+            const calendarMonth = document.getElementById('calendar-month');
+            const year = currentDate.getFullYear();
+            const month = currentDate.getMonth();
+
+            // Clear previous calendar
+            calendarGrid.innerHTML = '';
+
+            // Get the first day of the month
+            const firstDay = new Date(year, month, 1);
+            const lastDay = new Date(year, month + 1, 0);
+            const daysInMonth = lastDay.getDate();
+
+            // Get the day of the week for the first day
+            const startingDay = firstDay.getDay();
+
+            // Create empty cells for the days before the first day of the month
+            for (let i = 0; i < startingDay; i++) {
+                const emptyCell = document.createElement('div');
+                emptyCell.classList.add('calendar-day');
+                calendarGrid.appendChild(emptyCell);
+            }
+
+            // Create cells for each day of the month
+            for (let day = 1; day <= daysInMonth; day++) {
+                const cell = document.createElement('div');
+                cell.classList.add('calendar-day');
+                cell.textContent = day;
+
+                // Check if the day has a task
+                const taskDate = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                if (taskDates.includes(taskDate)) {
+                    cell.classList.add('task-due');
+                }
+
+                calendarGrid.appendChild(cell);
+            }
+
+            // Set the calendar month header
+            calendarMonth.textContent = `Star Date: ${year}.${String(month + 1).padStart(2, '0')}`;
+        }
+
+        function previousMonth() {
+            currentDate.setMonth(currentDate.getMonth() - 1);
+            renderCalendar();
+        }
+
+        function nextMonth() {
+            currentDate.setMonth(currentDate.getMonth() + 1);
+            renderCalendar();
+        }
+
+        // Task dates from the backend
+        const taskDates = [
+            {% for task in tasks %}
+                "{{ task.date }}",
+            {% endfor %}
+        ];
+
+        function toggleComplete(taskId) {
+            fetch(`/complete/${taskId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const taskItem = document.querySelector(`.timeline-item[data-id="${taskId}"]`);
+                    taskItem.classList.toggle('completed');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+
+        function togglePriority(taskId) {
+            fetch(`/prioritize/${taskId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const taskItem = document.querySelector(`.timeline-item[data-id="${taskId}"]`);
+                    taskItem.classList.toggle('priority');
+                    taskItem.classList.toggle('highlight');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+
+        function deleteTask(taskId) {
+            fetch(`/delete/${taskId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const taskItem = document.querySelector(`.timeline-item[data-id="${taskId}"]`);
+                    taskItem.remove();
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+
+        function deletePDF(pdfId) {
+            fetch(`/delete_pdf/${pdfId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const pdfItem = document.querySelector(`.pdf-item[data-id="${pdfId}"]`);
+                    pdfItem.remove();
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+
+        function viewPDF(url) {
+            const modal = document.getElementById('pdfModal');
+            const pdfFrame = document.getElementById('pdfFrame');
+            pdfFrame.src = url;
+            modal.style.display = 'block';
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('pdfModal');
+            modal.style.display = 'none';
+        }
+
+        window.onclick = function(event) {
+            const modal = document.getElementById('pdfModal');
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        }
+
+        // Profile image upload
+        document.getElementById('profileImageInput').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const formData = new FormData();
+                formData.append('profileImageInput', file);
+
+                fetch('/upload_profile_image', {
+                    method: 'POST',
+                    body: formData,
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        document.getElementById('profileImage').src = URL.createObjectURL(file);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            }
+        });
+    </script>
+
+</body>
+{% endblock %}

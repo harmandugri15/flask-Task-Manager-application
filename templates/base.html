@@ -1,0 +1,498 @@
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>PlanIt - Your Task Management Solution</title>
+        <!-- Bootstrap 5 (CDN) -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+        <style>
+        
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            body {
+                min-height: 200vh;
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                line-height: 1.6;
+                background-color: var(--background-color);
+                color: var(--primary-color);
+                display: flex;
+                flex-direction: column;
+            }
+
+            nav {
+                background-color: #03033a;
+                color:whitesmoke;
+                padding: 1rem;
+                box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+                position: fixed;
+                width: 100%;
+                z-index: 100000;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                flex-wrap: wrap;
+            }
+
+            #navwaladiv2 > a {
+                text-decoration: none;
+                color: white;
+                font-size: 30px;
+                display: flex;
+                align-items: center;
+            }
+
+            #navwaladiv {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                gap: 2rem;
+                flex-wrap: wrap;
+            }
+
+            nav #navwaladiv > div {
+                position: relative;
+                overflow: hidden;
+            }
+
+            nav #navwaladiv > div > a {
+                color: var(--text-color);
+                text-decoration: none;
+                font-weight: 500;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+                position: relative;
+                transition: color 0.3s ease;
+            }
+
+            nav #navwaladiv > div > a::after {
+                content: '';
+                position: absolute;
+                width: 100%;
+                height: 2px;
+                bottom: -5px;
+                left: -100%;
+                background-color: var(--accent-color);
+                transition: left 0.3s ease;
+            }
+
+            nav #navwaladiv > div > a:hover {
+                color: khaki;
+                text-shadow: 0 0 10px khaki;
+            }
+
+            nav #navwaladiv > div > a:hover::after {
+                left: 0;
+            }
+
+            button#signup {
+                background-color: #00aaff ;
+                color: black;
+                padding: 0.5rem 1rem;
+                border: none;
+                border-radius: 4px;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                /* box-shadow: 0 0 15px #00FFFF; */
+                border-radius: 10px;
+                /* border-radius: 10px; */
+                opacity:0.9;
+            }
+
+            button#signup > a {
+                text-decoration: none;
+                color:white;
+            }
+
+            button#signup:hover {
+                background-color: var(--accent-color);
+                transform: translateY(-2px);
+            }
+
+            button#signup:hover a {
+                color: #ffffff;
+            }
+
+            .hamburger {
+                display: none;
+                flex-direction: column;
+                cursor: pointer;
+            }
+
+            .hamburger .line {
+                width: 25px;
+                height: 3px;
+                background-color: var(--text-color);
+                margin: 4px 0;
+                transition: all 0.3s ease;
+            }
+
+            #img1 {
+                height: 40px;
+                width: 40px;
+                border-radius: 50%;
+                margin-right: 10px;
+            }
+
+            main {
+                padding: 80px 20px 40px;
+                flex: 1;
+                max-width: 1200px;
+                margin: 0 auto;
+                width: 100%;
+            }
+
+            .content-section {
+                background-color: white;
+                border-radius: 8px;
+                padding: 2rem;
+                margin-bottom: 2rem;
+                box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+                transition: transform 0.3s ease;
+            }
+
+            .content-section:hover {
+                transform: translateY(-5px);
+            }
+
+            h1 {
+                color: var(--accent-color);
+                margin-bottom: 1rem;
+            }
+
+            /* Enhanced Footer */
+            * Enhanced Footer */
+        footer {
+            background-color: var(--primary-color);
+            color: var(--text-color);
+            padding: 3rem 1rem;
+            margin-top: auto;
+            bottom: 0;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20;
+            display: flex;
+            justify-content: space-evenly;
+        }
+
+        .footer-section {
+            padding: 1rem;
+            margin-left: -70px;
+            /* margin-right: 20px; */
+            display: flex;
+            flex-direction: column;
+            color: #fff;
+            /* gap: 20px; */
+        }
+
+        .footer-section h3 {
+            color: var(--accent-color);
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+            color: #fff;
+        }
+
+        .footer-section p {
+            margin-bottom: 0.6rem;
+            color: #fff;
+
+        }
+
+        .footer-section ul {
+            list-style: none;
+            color: #fff;
+        }
+
+        .footer-section ul li {
+            margin-bottom: 0.5rem;
+            color: #fff;
+        }
+
+        .footer-section ul li a {
+            color: var(--text-color);
+            text-decoration: none;
+            transition: color 0.3s ease;
+            color: #fff;
+        }
+
+        .footer-section ul li a i {
+            font-size: 24px;
+            margin: 0 10px;
+            color: #fff;
+        }
+
+        .footer-section ul li a:hover {
+            color: #00eaff;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 2rem;
+            margin-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: #fff;
+        }
+
+            /* Style for the welcome message */
+            .welcome-message {
+                color: var(--accent-color);
+                font-weight: bold;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+                font-size: 1.2rem;
+            }
+
+            @media screen and (max-width: 768px) {
+                .hamburger {
+                    display: flex;
+                }
+
+                #navwaladiv {
+                    display: none;
+                    flex-direction: column;
+                    width: 100%;
+                    background-color: var(--primary-color);
+                    position: absolute;
+                    top: 60px;
+                    left: 0;
+                    padding: 1rem;
+                    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+                }
+
+                #navwaladiv.active {
+                    display: flex;
+                }
+
+                nav #navwaladiv > div {
+                    margin: 0.5rem 0;
+                }
+
+                .footer-content {
+                    grid-template-columns: 1fr;
+             
+                }
+            }
+            
+            nav #navwaladiv > div > a {
+    color: white;
+    text-decoration: none;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    position: relative;
+    transition: color 0.3s ease;
+}
+
+nav #navwaladiv > div > a::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 2px;
+    bottom: -3px;
+    left: 0;
+    background-color: khaki;
+    transform: scaleX(0);
+    transition: transform 0.3s ease-in-out;
+}
+
+nav #navwaladiv > div > a:hover {
+    color: khaki;
+    text-shadow: 0 0 10px khaki;
+}
+
+nav #navwaladiv > div > a:hover::after {
+    transform: scaleX(1);
+}
+
+/* Flash Messages */
+/* Flash Message Styles */
+.container .alert {
+    font-size: 16px;
+    font-weight: 500;
+    border-radius: 8px;
+    padding: 12px 20px;
+    margin-bottom: 15px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    opacity: 1;
+    transition: opacity 0.5s ease-in-out;
+    background-color: white;
+    color: #03033a;
+}
+
+/* Customize Alert Colors */
+.alert-success {
+    background-color: #d4edda;
+    color: #155724;
+    border-left: 5px solid #28a745;
+}
+
+.alert-danger {
+    background-color: #f8d7da;
+    color: #721c24;
+    border-left: 5px solid #dc3545;
+}
+
+.alert-warning {
+    background-color: #fff3cd;
+    color: #856404;
+    border-left: 5px solid #ffc107;
+}
+
+.alert-info {
+    background-color: #d1ecf1;
+    color: #0c5460;
+    border-left: 5px solid #17a2b8;
+}
+
+/* Animate the alert */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.container .alert {
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+/* Close button styling */
+.btn-close {
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+    position: absolute;
+    right: 15px;
+    top: 10px;
+    cursor: pointer;
+}
+
+
+        </style>
+        {% block style %}
+
+        {% endblock %}
+    </head>
+    <body>
+        <nav>
+            <div id="navwaladiv2">
+                <a href="{{url_for('home')}}">
+                    <img id="img1" src="../static/images/navimage.jpeg" alt="">
+                    PlanIt
+                </a>
+            </div>
+            <div class="hamburger" onclick="toggleNav()">
+                <div class="line"></div>
+                <div class="line"></div>
+                <div class="line"></div>
+            </div>
+            <div id="navwaladiv">
+                <div class="welcome-message" style="background-color: #2d3d8d; border-radius: 10px; padding: 15px;color: white; box-shadow: 5px 5px 0.5px rgba(48, 84, 192, 0.192);">{{current_user.username}}</div>
+                <div><a href="{{url_for('home')}}">Home</a></div>
+                <div><a href="#footer-bottom">About</a></div>
+                {% if current_user.is_authenticated %}
+                    {% if current_user.role=="admin" %}
+                        <div><a href="{{ url_for('admin' ) }}">admin</a></div>
+                    {% endif %}
+                    <div><a href="{{url_for('dashboard')}}">Dashboard</a></div>
+                    <div><a href="{{url_for('payment')}}">Pricing</a></div>
+                    <div><a href="{{url_for('logout')}}">Logout</a></div>
+
+                {% else %}
+
+                    <div><button id="signup" style="background-color:  blueviolet;" ><a href="{{ url_for('signup' ) }}">Register/Login</a></button></div>
+                {% endif %}
+            </div>
+            {% with messages = get_flashed_messages(with_categories=True) %}
+{% if messages %}
+  <div class="container mt-3">
+    {% for category, message in messages %}
+      <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+    {% endfor %}
+  </div>
+{% endif %}
+{% endwith %}
+        </nav>
+        {% block container %}
+        <main>
+            <section class="content-section">
+                <h1>Welcome to PlanIt</h1>
+                <p>Streamline your productivity with our intuitive task management solution. Create, organize, and track your tasks with ease. Stay on top of your goals and never miss a deadline again.</p>
+            </section>
+        </main>
+        {% endblock %}
+        <footer>
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3 style="color: white; font-size: 40px;">PlanIt</h3>
+                    <p style="font-size: 18px; line-height: 5px;">"Join thousands of users
+                    <pre style="font-size: 18px;">streamlining their tasks </pre>
+                    <pre style="font-size: 18px;">with ease!</pre>
+                    </p>
+                </div>
+                <div class="footer-section" style="margin-left: -40px;">
+                    <h3 style="color: #00eaff;position: relative; left: 50px;">Features</h3>
+                    <ul>
+                        <li>Task Creation and Organization</li>
+                        <li>Priority Management</li>
+                        <li>Due Date Tracking</li>
+                        <li>Progress Monitoring</li>
+                        <li>Team Collaboration</li>
+                    </ul>
+                </div>
+                <div class="footer-section" style="margin-left: -60px;">
+                    <h3 style="color: #00eaff;">Quick Links</h3>
+                    <ul>
+                        <li><a href="#">Getting Started</a></li>
+                        <li><a href="#">Terms of Service</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Contact Support</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section" style="margin-left: -50px;">
+                    <h3 style="color: #00eaff;">Contact Us</h3>
+                    <p>Email: support@taskmaster.com</p>
+                    <p>Phone: (555) 123-4567</p>
+                    <p>Address: 123 Productivity Lane,
+                    <pre></pre>Organization City, TS 12345</p>
+                </div>
+    
+                <div class="footer-section" style="margin-right: 20px; text-align: center; gap: 5px;">
+                    <h3 style="color: #00eaff;">Follow Us</h3>
+                    <i class="fab fa-github" style="color: white;font-size: 40px;  "></i>
+                    <i class="fab fa-twitter" style="color: white;font-size: 40px;margin: auto;"></i>
+                    <i class="fab fa-linkedin" style="color: white;font-size: 40px;margin: auto;"></i>
+                </div>
+            </div>
+            <div id="footer-bottom">
+                <p style="text-align: center; color: white;">&copy; 2025 TaskMaster. All Rights Reserved</p>
+            </div>
+        </footer>    
+        <script>
+            function toggleNav() {
+                var nav = document.getElementById('navwaladiv');
+                nav.classList.toggle('active');
+            }
+        </script>
+        
+
+    </body>
+    </html>
